@@ -85,12 +85,7 @@
                 outlined
                 label="Validade do Contrato"
               />
-              <q-input
-                v-model="object.observacoes"
-                outlined
-                label="Validade do Contrato"
-                type="textarea"
-              />
+              <q-input v-model="object.observacoes" outlined label="Observações" type="textarea" />
 
               <q-checkbox
                 label="Solicitar assinatura dos participantes"

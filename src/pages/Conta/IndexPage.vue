@@ -111,8 +111,6 @@ export default {
           tenantsApi
             .getByEmail(this.object.email)
             .then((res) => {
-              console.log(res)
-
               if (res.data.list?.length) {
                 alert('Já existe uma conta para este email')
               } else {
@@ -130,7 +128,6 @@ export default {
       authenticationApi
         .createAccont(this.object.email, this.object.senha)
         .then((res) => {
-          console.log(res)
           this.object.fb_id = res.uid
           this.criarContaNoco()
         })

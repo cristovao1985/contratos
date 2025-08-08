@@ -123,7 +123,6 @@ export default {
       pessoasApi
         .getByEmail(this.contrato.email_contratante)
         .then((res) => {
-          console.log(res)
           this.pessoa = res.data.list[0]
         })
         .catch((error) => {
@@ -191,8 +190,6 @@ export default {
             alert('houve um erro ao assinar contrato')
           })
       }
-      console.log(isEmpty)
-      console.log(data)
     },
   },
 }

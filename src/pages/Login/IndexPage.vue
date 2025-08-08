@@ -87,7 +87,6 @@ export default {
       firebaseApi
         .login(this.login)
         .then((res) => {
-          console.log(res)
           if (!res.emailVerified) {
             alert(
               'Sua conta ainda não foi verificada. Acesse sua caixa de email e clique no link enviado',
