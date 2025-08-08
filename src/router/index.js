@@ -33,5 +33,21 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
 
+  Router.beforeEach((to, from, next) => {
+    var tokenStr = JSON.parse(localStorage.getItem('contrato-user'))
+
+    if (
+      to.path === '/login' ||
+      to.path === '/assinatura-contratante' ||
+      to.path === '/assinatura-contratado' ||
+      to.path === '/conta'
+    ) {
+      next()
+    } else if (!tokenStr?.email || Date.now() > tokenStr?.expires) {
+      next('/login')
+    } else {
+      next()
+    }
+  })
   return Router
 })

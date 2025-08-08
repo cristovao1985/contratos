@@ -4,18 +4,50 @@
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-toolbar-title>Gestão de Contratos</q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>v.0.0.1</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-
+        <q-img :src="logo" style="height: 150px">
+          <!-- <div class="absolute-bottom bg-transparent">
+            <q-avatar size="56px" class="q-mb-sm">
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+            </q-avatar>
+            <div class="text-weight-bold">Razvan Stoenescu</div>
+            <div>@rstoenescu</div>
+          </div> -->
+        </q-img>
+        <q-item clickable @click="changePerfil">
+          <q-item-section avatar>
+            <q-avatar>
+              <img :src="user.logo" />
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>{{ user.nome }}</q-item-section>
+        </q-item>
+        <div v-if="!hasAccess" class="q-ma-md">
+          <span class="text-negative">
+            Sua conta expirou! Algumas funcionalidades foram bloqueadas
+          </span>
+        </div>
+        <q-separator />
         <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
       </q-list>
+      <q-separator />
+
+      <div class="q-ma-md">
+        <q-btn
+          label="Sair do Sistema"
+          color="negative"
+          class="full-width"
+          @click="loggout"
+          icon="logout"
+        />
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -27,49 +59,40 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-
+import firebaseApi from '../api/firebase/authentication.api'
+import { useCounterStore } from '../stores/example-store'
+const store = useCounterStore()
+import session from 'src/helpers/session'
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+    title: 'Home',
+    caption: 'Tela Inicial',
+    icon: 'home',
+    link: '#/home',
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
+    title: 'Modelos',
+    caption: 'Modelos de Contratos',
+    icon: 'description',
+    link: '#/modelos',
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
+    title: 'Pessoas',
+    caption: 'Participantes em Contrato',
+    icon: 'group',
+    link: '#/pessoas',
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
+    title: 'Contratos',
+    caption: 'Gerenciamento de Contratos',
+    icon: 'edit_document',
+    link: '#/contratos',
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
+    title: 'Configurações',
+    caption: 'Meu Perfil',
+    icon: 'settings',
+    link: '#/perfil',
   },
 ]
 
@@ -82,14 +105,35 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false)
-
+    const logo = require('../../public/images/banner.png')
+    const user = JSON.parse(localStorage.getItem('contrato-user'))
     return {
       linksList,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value
       },
+      logo,
+      user,
     }
+  },
+  created() {
+    session.hasAccess()
+  },
+  computed: {
+    hasAccess() {
+      return store.hasAccess
+    },
+  },
+  methods: {
+    loggout() {
+      firebaseApi.loggout()
+      this.$router.push({ name: 'login' })
+      localStorage.removeItem('contrato-user')
+    },
+    changePerfil() {
+      this.$router.push({ name: 'perfil' })
+    },
   },
 })
 </script>
