@@ -1,5 +1,5 @@
 <template>
-  <span v-html="content.conteudo"></span>
+  <span v-html="content"></span>
 </template>
 
 <script>
@@ -23,15 +23,20 @@ export default {
       let contrato = JSON.parse(this.$route.params.contrato)
 
       if (contrato.assinatura_contratante) {
-        const imgTag = `<img src="${contrato.assinatura_contratante}" style="height: 100px;" />`
-        contrato = contrato.conteudo.replace(/\[contratante\.assinatura\]/g, imgTag)
+        contrato.conteudo = await this.mountAssinaturaContratante(contrato)
       }
       if (contrato.assinatura_contratado) {
-        const imgTag = `<img src="${contrato.assinatura_contratado}" style="height: 100px;" />`
-        contrato = contrato.conteudo.replace(/\[contratado\.assinatura\]/g, imgTag)
+        contrato.conteudo = await this.mountAssinaturaContratado(contrato)
       }
-      this.content = contrato
-      console.log(this.content)
+      this.content = contrato.conteudo
+    },
+    async mountAssinaturaContratante(contrato) {
+      const imgTag = `<img src="${contrato.assinatura_contratante}" style="height: 100px;" />`
+      return (contrato = contrato.conteudo.replace(/\[contratante\.assinatura\]/g, imgTag))
+    },
+    async mountAssinaturaContratado(contrato) {
+      const imgTag = `<img src="${contrato.assinatura_contratado}" style="height: 100px;" />`
+      return (contrato = contrato.conteudo.replace(/\[contratado\.assinatura\]/g, imgTag))
     },
   },
 }
