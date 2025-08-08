@@ -1,6 +1,7 @@
 import PrintComponent from '../components/PrintFile.vue'
 
 const routes = [
+  { path: '/', redirect: { path: '/home' } },
   {
     path: '/',
     component: () => import('layouts/AuthLayout.vue'),

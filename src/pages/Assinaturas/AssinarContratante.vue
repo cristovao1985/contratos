@@ -1,7 +1,7 @@
 <template>
   <q-page class="text-center">
     <div v-if="!contrato?.Id" class="q-ma-md">
-      <q-card class="q-mb-md">
+      <q-card class="q-ma-md">
         <q-card-section>
           <div class="text-h6 text-primary">Contrato não encontrado</div>
           <div class="text-subtitle2">
@@ -12,7 +12,14 @@
     </div>
     <div v-else>
       <div v-if="contrato?.assinatura_contratante">
-        <h5>Este contrato já foi assinado. Obrigado!</h5>
+        <q-card class="q-ma-md">
+          <q-card-section>
+            <div class="text-h6 text-primary">Este Contrato já foi assinado. Obrigado</div>
+            <div class="text-subtitle2">
+              A parte contratante já assinou o contrato anteriormente
+            </div>
+          </q-card-section>
+        </q-card>
       </div>
       <div v-else>
         <q-card v-if="!assinar" class="q-ma-md">
@@ -28,7 +35,7 @@
             </q-card-actions>
           </div>
           <q-card-section class="q-gutter-sm">
-            <q-form ref="form">
+            <q-form ref="form" @submit="validar">
               <q-checkbox
                 v-model="tipoPessoa"
                 true-value="PJ"
@@ -53,16 +60,21 @@
                 lazy-rules
                 :rules="[(val) => val.length > 4 || 'Campo obrigatório']"
               />
+              <q-card-actions align="right">
+                <q-btn label="Validar Informações" color="primary" type="submit" />
+              </q-card-actions>
             </q-form>
           </q-card-section>
-          <q-card-actions align="right">
-            <q-btn label="Validar Informações" color="primary" @click="validar" />
-          </q-card-actions>
         </q-card>
 
-        <q-card v-else class="q-ma-md">
-          <h5>Assine na área branca</h5>
-          <VueSignaturePad width="1000px" height="200px" ref="signaturePad" />
+        <q-card v-else class="q-ma-md text-center">
+          <h5>Assine dentro da área pontilhada</h5>
+          <VueSignaturePad
+            width="1000px"
+            height="200px"
+            ref="signaturePad"
+            :customStyle="{ border: 'dotted' }"
+          />
           <q-card-actions align="right">
             <q-btn label="Refazer Assinatura" @click="desfazerAssinatura" flat />
             <q-btn label="Assinar Contrato" color="positive" @click="assinarContrato" />

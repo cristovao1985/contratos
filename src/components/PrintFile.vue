@@ -1,12 +1,25 @@
 <template>
-  <span v-html="content"></span>
+  <span v-html="content.conteudo"></span>
 </template>
 
 <script>
 export default {
   name: 'PrintFile',
-  computed: {
-    content() {
+  data() {
+    return {
+      content: '',
+    }
+  },
+  async created() {
+    await this.createContent()
+
+    this.print()
+  },
+  methods: {
+    print() {
+      window.print()
+    },
+    async createContent() {
       let contrato = JSON.parse(this.$route.params.contrato)
 
       if (contrato.assinatura_contratante) {
@@ -17,17 +30,8 @@ export default {
         const imgTag = `<img src="${contrato.assinatura_contratado}" style="height: 100px;" />`
         contrato = contrato.conteudo.replace(/\[contratado\.assinatura\]/g, imgTag)
       }
-      return contrato
-    },
-  },
-  mounted() {
-    console.log(this.$route.params)
-
-    this.print()
-  },
-  methods: {
-    print() {
-      window.print()
+      this.content = contrato
+      console.log(this.content)
     },
   },
 }

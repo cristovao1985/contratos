@@ -46,7 +46,7 @@
       <q-input
         outlined
         v-model="object.nascimento"
-        mask="##/##/####"
+        type="date"
         lazy-rules
         :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
         label="Data de Nascimento(Necessário para Assinatura)"
