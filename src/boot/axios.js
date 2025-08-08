@@ -7,7 +7,7 @@ import axios from 'axios'
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const baseURL = 'http://38.210.209.81:8080/api/v2/tables'
+const baseURL = 'https://nocodb.lineasoft.com.br/api/v2/tables'
 const api = axios.create({
   headers: {
     'xc-token': 'bZtL3y3SMiZi_ogmWgeQXKWKTCb8mlw7pHWDo39W',

@@ -24,11 +24,9 @@ export default {
         const hojeSemHora = new Date(hoje.toISOString().split('T')[0])
 
         if (dataSistemaSemHora <= hojeSemHora) {
-          console.log('A data é menor ou igual a hoje')
           // conta expirada
           store.setUserAccess(false)
         } else {
-          console.log('A data é maior que hoje')
           //conta valida
 
           store.setUserAccess(true)
