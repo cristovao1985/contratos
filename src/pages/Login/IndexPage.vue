@@ -122,14 +122,14 @@ export default {
               })
               .catch((error) => {
                 console.log(error.message)
-                this.loading = true
+                this.loading = false
               })
           }
         })
         .catch((error) => {
           console.log(error)
           alert('Houve um erro no login. Verifique seu email e senha e tente novamente.')
-          this.loading = true
+          this.loading = false
         })
     },
   },
