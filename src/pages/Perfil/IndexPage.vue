@@ -46,9 +46,12 @@
       <q-input outlined v-model="object.endereco" label="Endereço Completo" />
       <q-file outlined v-model="file" label="Toque para selecionar imagem" />
       <br />
-
-      <q-img :src="object.logo" v-if="object.logo" style="height: 100px; width: 100px" />
-      <q-btn icon="delete" flat color="negative" @click="object.logo = ''" v-if="object.logo" />
+      <div>
+        <q-avatar size="80px">
+          <img :src="object.logo" />
+        </q-avatar>
+        <q-btn icon="delete" flat color="negative" @click="object.logo = ''" v-if="object.logo" />
+      </div>
     </q-form>
     <q-card-actions align="right">
       <q-btn label="Salvar Perfil" color="positive" @click="save" :loading="loading" />

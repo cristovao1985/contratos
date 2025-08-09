@@ -6,21 +6,13 @@
 
         <q-toolbar-title>Gestão de Contratos</q-toolbar-title>
 
-        <div>v.0.0.1</div>
+        <div>v.0.0.2</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-img :src="logo" style="height: 150px">
-          <!-- <div class="absolute-bottom bg-transparent">
-            <q-avatar size="56px" class="q-mb-sm">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-            </q-avatar>
-            <div class="text-weight-bold">Razvan Stoenescu</div>
-            <div>@rstoenescu</div>
-          </div> -->
-        </q-img>
+        <q-img :src="logo" style="height: 150px"> </q-img>
         <q-item clickable @click="changePerfil">
           <q-item-section avatar>
             <q-avatar>
@@ -61,7 +53,6 @@ import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 import firebaseApi from '../api/firebase/authentication.api'
 import { useCounterStore } from '../stores/example-store'
-const store = useCounterStore()
 import session from 'src/helpers/session'
 const linksList = [
   {
@@ -113,6 +104,7 @@ export default defineComponent({
     const leftDrawerOpen = ref(false)
     const logo = require('../../public/images/banner.png')
     const user = JSON.parse(localStorage.getItem('contrato-user'))
+    const store = useCounterStore()
     return {
       linksList,
       leftDrawerOpen,
@@ -121,14 +113,15 @@ export default defineComponent({
       },
       logo,
       user,
+      store,
     }
   },
-  created() {
-    session.hasAccess()
+  mounted() {
+    this.verifySession()
   },
   computed: {
     hasAccess() {
-      return store.hasAccess
+      return this.store.hasAccess
     },
   },
   methods: {
@@ -139,6 +132,9 @@ export default defineComponent({
     },
     changePerfil() {
       this.$router.push({ name: 'perfil' })
+    },
+    async verifySession() {
+      await session.hasAccess()
     },
   },
 })

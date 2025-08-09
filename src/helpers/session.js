@@ -1,14 +1,13 @@
 import tenantsApi from 'src/api/tenants.api'
 import { useCounterStore } from 'src/stores/example-store'
-const store = useCounterStore()
 
 export default {
   getUserTenant: async () => {
     const user = JSON.parse(localStorage.getItem('contrato-user'))
-
-    return user.fb_id
+    return user?.fb_id
   },
   hasAccess: async () => {
+    const store = useCounterStore()
     const user = JSON.parse(localStorage.getItem('contrato-user'))
 
     await tenantsApi

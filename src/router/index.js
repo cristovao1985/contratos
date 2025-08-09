@@ -35,7 +35,6 @@ export default defineRouter(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to, from, next) => {
     var tokenStr = JSON.parse(localStorage.getItem('contrato-user'))
-    console.log(to)
 
     if (
       to.path === '/login' ||

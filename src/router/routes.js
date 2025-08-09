@@ -36,7 +36,7 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/PrintLayout.vue'),
-    children: [{ path: '/print/:contrato', name: 'print', component: () => PrintComponent }],
+    children: [{ path: '/print/:id', name: 'print', component: () => PrintComponent }],
   },
   {
     path: '/',

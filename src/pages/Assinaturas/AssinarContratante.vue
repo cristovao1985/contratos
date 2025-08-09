@@ -70,7 +70,7 @@
         <q-card v-else class="q-ma-md text-center">
           <h5>Assine dentro da área pontilhada</h5>
           <VueSignaturePad
-            width="1000px"
+            width="500px"
             height="200px"
             ref="signaturePad"
             :customStyle="{ border: 'dotted' }"

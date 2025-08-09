@@ -1,35 +1,44 @@
 <template>
-  <span v-html="content"></span>
+  <span v-html="contrato.conteudo"></span>
 </template>
 
 <script>
+import contratosApi from 'src/api/contratos.api'
 export default {
   name: 'PrintFile',
   data() {
     return {
-      content: '',
+      contrato: {},
     }
   },
   async created() {
+    await this.getContrato()
     await this.createContent()
 
-    this.print()
+    await this.print()
   },
   methods: {
-    print() {
-      window.print()
+    async print() {
+      await window.print()
+    },
+    async getContrato() {
+      await contratosApi
+        .getById(this.$route.params.id)
+        .then((res) => {
+          this.contrato = res.data.list[0] || {}
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     async createContent() {
       try {
-        let contrato = JSON.parse(this.$route.params.contrato)
-
-        if (contrato.assinatura_contratante) {
-          contrato.conteudo = await this.mountAssinaturaContratante(contrato)
+        if (this.contrato.assinatura_contratante) {
+          this.contrato.conteudo = await this.mountAssinaturaContratante(this.contrato)
         }
-        if (contrato.assinatura_contratado) {
-          contrato.conteudo = await this.mountAssinaturaContratado(contrato)
+        if (this.contrato.assinatura_contratado) {
+          this.contrato.conteudo = await this.mountAssinaturaContratado(this.contrato)
         }
-        this.content = contrato.conteudo
       } catch (error) {
         console.log(error)
       }

@@ -94,7 +94,7 @@ export default {
       const route = this.$router.resolve({
         name: 'print',
         params: {
-          contrato: JSON.stringify(contrato),
+          id: contrato.Id,
         },
       })
 
@@ -142,7 +142,7 @@ export default {
       }
       webhookApi
         .solicitarAssinaturaDoContratado(data)
-        .then(alert('email para contratado enviando com sucesso!'))
+        .then(alert('Email para contratado enviando com sucesso!'))
         .catch((error) => {
           console.log(error)
           alert('Houve um erro ao enviar email para', row.email_contratado)
@@ -155,7 +155,7 @@ export default {
         .update(row)
         .then(() => {
           this.getAll()
-          alert('Assinatura do Contratante foi revogada com sucesso!')
+          alert('Assinatura do Contratante foi revogada com sucesso! Solicite uma nova assinatura')
         })
         .catch((error) => {
           console.log(error)
@@ -169,7 +169,7 @@ export default {
         .update(row)
         .then(() => {
           this.getAll()
-          alert('Assinatura do Contratado foi revogada com sucesso!')
+          alert('Assinatura do Contratado foi revogada com sucesso! Solicite uma nova assinatura')
         })
         .catch((error) => {
           console.log(error)
