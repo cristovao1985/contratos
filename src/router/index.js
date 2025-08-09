@@ -35,11 +35,12 @@ export default defineRouter(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to, from, next) => {
     var tokenStr = JSON.parse(localStorage.getItem('contrato-user'))
+    console.log(to)
 
     if (
       to.path === '/login' ||
-      to.path === '/assinatura-contratante' ||
-      to.path === '/assinatura-contratado' ||
+      to.name === 'assinatura-contratante' ||
+      to.name === 'assinatura-contratado' ||
       to.path === '/conta'
     ) {
       next()

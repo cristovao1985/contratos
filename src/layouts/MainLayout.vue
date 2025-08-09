@@ -77,6 +77,12 @@ const linksList = [
     link: '#/modelos',
   },
   {
+    title: 'Templates',
+    caption: 'Modelos prontos',
+    icon: 'content_copy',
+    link: '#/templates',
+  },
+  {
     title: 'Pessoas',
     caption: 'Participantes em Contrato',
     icon: 'group',

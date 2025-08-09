@@ -123,7 +123,7 @@ export default {
         contratante: row.contratante,
         email_contratante: row.email_contratante,
         id_contrato: row.Id,
-        nome: row.nome,
+        nome_contrato: row.nome,
       }
       webhookApi
         .solicitarAssinaturaDoContratante(data)
@@ -138,7 +138,7 @@ export default {
         contratado: row.contratado,
         email_contratado: row.email_contratado,
         id_contrato: row.Id,
-        nome: row.nome,
+        nome_contrato: row.nome,
       }
       webhookApi
         .solicitarAssinaturaDoContratado(data)

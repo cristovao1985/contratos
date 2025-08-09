@@ -26,6 +26,11 @@ const routes = [
       },
       { path: '/contrato/:id?', component: () => import('pages/Contratos/ContratoPage.vue') },
       { path: '/perfil', name: 'perfil', component: () => import('pages/Perfil/IndexPage.vue') },
+      {
+        path: '/templates',
+        name: 'templates',
+        component: () => import('pages/Templates/IndexPage.vue'),
+      },
     ],
   },
   {

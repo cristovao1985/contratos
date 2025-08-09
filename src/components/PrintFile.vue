@@ -20,23 +20,37 @@ export default {
       window.print()
     },
     async createContent() {
-      let contrato = JSON.parse(this.$route.params.contrato)
+      try {
+        let contrato = JSON.parse(this.$route.params.contrato)
 
-      if (contrato.assinatura_contratante) {
-        contrato.conteudo = await this.mountAssinaturaContratante(contrato)
+        if (contrato.assinatura_contratante) {
+          contrato.conteudo = await this.mountAssinaturaContratante(contrato)
+        }
+        if (contrato.assinatura_contratado) {
+          contrato.conteudo = await this.mountAssinaturaContratado(contrato)
+        }
+        this.content = contrato.conteudo
+      } catch (error) {
+        console.log(error)
       }
-      if (contrato.assinatura_contratado) {
-        contrato.conteudo = await this.mountAssinaturaContratado(contrato)
-      }
-      this.content = contrato.conteudo
     },
     async mountAssinaturaContratante(contrato) {
-      const imgTag = `<img src="${contrato.assinatura_contratante}" style="height: 100px;" />`
-      return (contrato = contrato.conteudo.replace(/\[contratante\.assinatura\]/g, imgTag))
+      try {
+        const imgTag = `<img src="${contrato.assinatura_contratante}" style="height: 100px;" />`
+        return (contrato = contrato.conteudo.replace(/\[contratante\.assinatura\]/g, imgTag))
+      } catch (error) {
+        alert('Erro ao gerar assinatura contratante')
+        console.log(error)
+      }
     },
     async mountAssinaturaContratado(contrato) {
-      const imgTag = `<img src="${contrato.assinatura_contratado}" style="height: 100px;" />`
-      return (contrato = contrato.conteudo.replace(/\[contratado\.assinatura\]/g, imgTag))
+      try {
+        const imgTag = `<img src="${contrato.assinatura_contratado}" style="height: 100px;" />`
+        return (contrato = contrato.conteudo.replace(/\[contratado\.assinatura\]/g, imgTag))
+      } catch (error) {
+        alert('Erro ao gerar assinatura contratado')
+        console.log(error)
+      }
     },
   },
 }

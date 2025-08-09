@@ -201,6 +201,7 @@
             />
           </q-card-actions>
         </div>
+        <q-linear-progress indeterminate v-if="loadingAnexos" />
         <q-table :rows="anexos" :columns="columns" :loading="loadingAnexos">
           <template v-slot:body-cell-data="props">
             <q-td :props="props">
@@ -504,14 +505,15 @@ export default {
       this.parsedFile = ''
       this.anexo.nome = ''
     },
-    anexarArquivo() {
+    async anexarArquivo() {
       if (!this.anexo.nome) {
         alert('Nome do anexo é obrigatório')
         return
       }
+      this.loadingAnexos = true
       this.anexo.arquivo = this.parsedFile
       this.anexo.id_contrato = this.object.Id
-      anexosApi
+      await anexosApi
         .create(this.anexo)
         .then(() => {
           this.getAnexosContrato()
@@ -521,8 +523,8 @@ export default {
           console.log(error)
         })
     },
-    getAnexosContrato() {
-      anexosApi
+    async getAnexosContrato() {
+      await anexosApi
         .getAllByIdContrato(this.object.Id)
         .then((res) => {
           this.anexos = res.data.list
@@ -541,8 +543,9 @@ export default {
     closeModal(modal) {
       this.showModal[modal] = false
     },
-    deleteAnexo(Id) {
-      anexosApi
+    async deleteAnexo(Id) {
+      this.loadingAnexos = true
+      await anexosApi
         .delete(Id)
         .then(() => {
           this.getAnexosContrato()
