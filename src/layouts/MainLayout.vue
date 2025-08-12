@@ -6,7 +6,7 @@
 
         <q-toolbar-title>Gestão de Contratos</q-toolbar-title>
 
-        <div>v.0.0.2</div>
+        <div>v.0.0.3</div>
       </q-toolbar>
     </q-header>
 
