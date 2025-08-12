@@ -62,7 +62,7 @@
 import tenantsApi from '../../api/tenants.api'
 import helpers from '../../helpers/base64'
 import dateHelper from '../../helpers/dateHelper'
-//import { showSuccessMessage } from 'src/boot/toast'
+import showMessage from '../../boot/notify'
 export default {
   name: 'PerfilPage',
   data() {
@@ -115,9 +115,8 @@ export default {
             await tenantsApi
               .update(this.object, this.$route.params.id)
               .then(() => {
-                alert('Perfil alterado com sucesso!')
+                showMessage.success('Perfil alterado com sucesso!')
                 this.loading = false
-                //this.$router.push({ name: 'home' })
               })
               .catch((error) => {
                 console.log(error)

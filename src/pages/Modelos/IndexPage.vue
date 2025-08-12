@@ -26,6 +26,7 @@
 <script>
 import TableComponent from 'src/components/TableComponent'
 import modelosApi from '../../api/modelos.api'
+import showMessage from '../../boot/notify'
 export default {
   name: 'ModelosPage',
   components: {
@@ -65,6 +66,7 @@ export default {
       modelosApi
         .delete(Id)
         .then(() => {
+          showMessage.success('Modelo removido com sucesso')
           this.getAll()
         })
         .catch((error) => {
@@ -84,7 +86,7 @@ export default {
         .create(modelo)
         .then(() => {
           this.getAll()
-          alert('Cópia de modelo contrato criada com sucesso!')
+          showMessage.success('Cópia de modelo contrato criada com sucesso!')
         })
         .catch((error) => {
           console.log(error)

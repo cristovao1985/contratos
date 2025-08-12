@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="text-h6 text-primary">Pessoas</div>
         <div class="text-subtitle2">
-          Gerenciamento de pessoas como partes contratante ou contratada em um contrato
+          Gerenciamento de pessoas signatárias como partes contratante ou contratada em um contrato
         </div>
       </q-card-section>
     </q-card>
@@ -24,6 +24,7 @@
 <script>
 import TableComponent from 'src/components/TableComponent'
 import pessoasApi from '../../api/pessoas.api'
+import showMessage from '../../boot/notify'
 export default {
   name: 'PessoasPage',
   components: {
@@ -63,6 +64,7 @@ export default {
       pessoasApi
         .delete(Id)
         .then(() => {
+          showMessage.success('Pessoa removida com sucesso!')
           this.getAll()
         })
         .catch((error) => {
