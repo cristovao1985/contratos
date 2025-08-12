@@ -3,10 +3,8 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-
         <q-toolbar-title>Gestão de Contratos</q-toolbar-title>
-
-        <div>v.0.0.3</div>
+        <div>v.0.0.4</div>
       </q-toolbar>
     </q-header>
 
@@ -67,15 +65,15 @@ const linksList = [
     icon: 'description',
     link: '#/modelos',
   },
-  {
-    title: 'Templates',
-    caption: 'Modelos prontos',
-    icon: 'content_copy',
-    link: '#/templates',
-  },
+  // {
+  //   title: 'Templates',
+  //   caption: 'Modelos prontos',
+  //   icon: 'content_copy',
+  //   link: '#/templates',
+  // },
   {
     title: 'Pessoas',
-    caption: 'Participantes em Contrato',
+    caption: 'Signatários em Contrato',
     icon: 'group',
     link: '#/pessoas',
   },

@@ -6,6 +6,7 @@
     :columns="columns"
     :title="title"
     :filter="filter"
+    color="primary"
   >
     <template v-slot:top>
       <q-input outlined dense debounce="300" v-model="filter" placeholder="Pesquisar...">

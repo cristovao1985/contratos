@@ -62,6 +62,7 @@
 
 <script>
 import pessoasApi from 'src/api/pessoas.api'
+import showMessage from '../../boot/notify'
 export default {
   name: 'PessoaPage',
   data() {
@@ -81,14 +82,14 @@ export default {
       this.edit = true
       this.object.Id = Id
       this.loading = true
-      this.getModeloById()
+      this.getPessoa()
     }
   },
   methods: {
     backToIndex() {
       this.$router.push({ name: 'pessoas' })
     },
-    getModeloById() {
+    getPessoa() {
       pessoasApi
         .getById(this.object.Id)
         .then((res) => {
@@ -112,24 +113,30 @@ export default {
           } else {
             this.create()
           }
-        } else {
-          alert('Existem campos não preenchidos')
         }
       })
     },
     create() {
       pessoasApi
         .create(this.object)
-        .then(this.backToIndex())
+        .then(() => {
+          showMessage.success('Pessoa criada com sucesso')
+          this.backToIndex()
+        })
         .catch((error) => {
+          showMessage.error('Houve um erro ao criar pessoa')
           console.log(error)
         })
     },
     update() {
       pessoasApi
         .update(this.object)
-        .then(this.backToIndex())
+        .then(() => {
+          showMessage.success('Pessoa editada com sucesso')
+          this.backToIndex()
+        })
         .catch((error) => {
+          showMessage.error('Houve um erro ao editar pessoa')
           console.log(error)
         })
     },

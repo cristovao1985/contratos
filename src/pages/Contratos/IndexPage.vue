@@ -31,6 +31,7 @@
 import TableContratosComponent from 'src/components/TableContratosComponent'
 import contratosApi from '../../api/contratos.api'
 import webhookApi from 'src/api/webhook.api'
+import showMessage from '../../boot/notify'
 export default {
   name: 'ContratosPage',
   components: {
@@ -83,6 +84,7 @@ export default {
       contratosApi
         .delete(Id)
         .then(() => {
+          showMessage.success('Contrato removido com sucesso')
           this.getAll()
         })
         .catch((error) => {
@@ -111,7 +113,7 @@ export default {
         .create(row)
         .then(() => {
           this.getAll()
-          alert('Cópia de contrato criada com sucesso!')
+          showMessage.success('Cópia de contrato criada com sucesso!')
         })
         .catch((error) => {
           console.log(error)
@@ -127,10 +129,10 @@ export default {
       }
       webhookApi
         .solicitarAssinaturaDoContratante(data)
-        .then(alert('Email para contratante enviando com sucesso!'))
+        .then(showMessage.success('Email para contratante enviando com sucesso!'))
         .catch((error) => {
           console.log(error)
-          alert('Houve um erro ao enviar email para', row.email_contratante)
+          showMessage.error('Houve um erro ao enviar email para', row.email_contratante)
         })
     },
     emailContratado(row) {
@@ -142,10 +144,10 @@ export default {
       }
       webhookApi
         .solicitarAssinaturaDoContratado(data)
-        .then(alert('Email para contratado enviando com sucesso!'))
+        .then(showMessage.success('Email para contratado enviando com sucesso!'))
         .catch((error) => {
           console.log(error)
-          alert('Houve um erro ao enviar email para', row.email_contratado)
+          showMessage.error('Houve um erro ao enviar email para', row.email_contratado)
         })
     },
     async revogarAssinaturaContratante(row) {
@@ -155,7 +157,9 @@ export default {
         .update(row)
         .then(() => {
           this.getAll()
-          alert('Assinatura do Contratante foi revogada com sucesso! Solicite uma nova assinatura')
+          showMessage.success(
+            'Assinatura do Contratante foi revogada com sucesso! Solicite uma nova assinatura',
+          )
         })
         .catch((error) => {
           console.log(error)
@@ -169,7 +173,9 @@ export default {
         .update(row)
         .then(() => {
           this.getAll()
-          alert('Assinatura do Contratado foi revogada com sucesso! Solicite uma nova assinatura')
+          showMessage.success(
+            'Assinatura do Contratado foi revogada com sucesso! Solicite uma nova assinatura',
+          )
         })
         .catch((error) => {
           console.log(error)

@@ -95,7 +95,7 @@
 
 <script>
 import modelosApi from 'src/api/modelos.api'
-
+import showMessage from '../../boot/notify'
 export default {
   name: 'ModeloPage',
   data() {
@@ -156,15 +156,16 @@ export default {
           } else {
             this.create()
           }
-        } else {
-          alert('Existem campos não preenchidos')
         }
       })
     },
     create() {
       modelosApi
         .create(this.object)
-        .then(this.backToIndex())
+        .then(() => {
+          showMessage.success('Modelo criado com sucesso')
+          this.backToIndex()
+        })
         .catch((error) => {
           console.log(error)
         })
@@ -172,7 +173,10 @@ export default {
     update() {
       modelosApi
         .update(this.object)
-        .then(this.backToIndex())
+        .then(() => {
+          showMessage.success('Modelo editado com sucesso')
+          this.backToIndex()
+        })
         .catch((error) => {
           console.log(error)
         })

@@ -113,6 +113,8 @@ export default {
                       expires: new Date(today).getTime(),
                       logo: user.logo,
                       fb_id: res.uid,
+                      endereco: user.endereco,
+                      cpfCnpj: user.cpf_cnpj,
                     }),
                   )
 

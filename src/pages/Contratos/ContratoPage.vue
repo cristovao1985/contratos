@@ -1,6 +1,12 @@
 <template>
   <q-page class="q-ma-md">
-    <h5>{{ edit ? 'Edição' : 'Criação' }} de contrato</h5>
+    <h5></h5>
+    <q-card class="q-mb-md">
+      <q-card-section>
+        <div class="text-h6 text-primary">{{ edit ? 'Edição' : 'Criação' }} de contrato</div>
+        <div class="text-subtitle2">Crie ou edite um contrato entre você ou outros signatários</div>
+      </q-card-section>
+    </q-card>
     <q-linear-progress indeterminate v-if="loading" />
     <q-tabs
       v-model="tab"
@@ -36,60 +42,83 @@
                 :loading="loading"
                 color="primary"
               />
-              <q-select
-                :options="pessoas"
-                label="Selecione o Contratante"
-                outlined
-                lazy-rules
-                :rules="[(val) => val || 'Campo obrigatório']"
-                option-value="Id"
-                option-label="nome"
-                emit-value
-                map-options
-                v-model="object.id_contratante"
-                :loading="loading"
-                color="positive"
-              />
-              <q-select
-                :options="pessoas"
-                label="Selecione o Contratado"
-                outlined
-                lazy-rules
-                :rules="[(val) => val || 'Campo obrigatório']"
-                option-value="Id"
-                option-label="nome"
-                emit-value
-                map-options
-                v-model="object.id_contratado"
-                :loading="loading"
-                color="warning"
-              />
-              <q-input
-                outlined
-                v-model="object.nome"
-                placeholder="Idetificação do Contrato"
-                label="Idetificação do Contrato"
-                lazy-rules
-                :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
-              />
-              <q-input
-                type="date"
-                v-model="object.validade"
-                outlined
-                label="Validade do Contrato"
-              />
-              <q-input v-model="object.observacoes" outlined label="Observações" type="textarea" />
+              <div v-if="object.id_modelo">
+                <q-select
+                  :options="pessoas"
+                  label="Selecione o Contratante"
+                  outlined
+                  lazy-rules
+                  :rules="[(val) => val || 'Campo obrigatório']"
+                  option-value="Id"
+                  option-label="nome"
+                  emit-value
+                  map-options
+                  v-model="object.id_contratante"
+                  :loading="loading"
+                  color="positive"
+                />
+                <q-checkbox
+                  label="SOU A PARTE CONTRADA"
+                  :true-value="1"
+                  :false-value="0"
+                  v-model="souContratado"
+                  class="text-bold"
+                />
+                <q-select
+                  :options="pessoas"
+                  label="Selecione o Contratado"
+                  outlined
+                  lazy-rules
+                  :rules="[(val) => (val && !souContratado) || 'Campo obrigatório']"
+                  option-value="Id"
+                  option-label="nome"
+                  emit-value
+                  map-options
+                  v-model="object.id_contratado"
+                  :loading="loading"
+                  color="warning"
+                  v-if="!souContratado"
+                />
+                <q-input
+                  outlined
+                  v-model="object.nome"
+                  placeholder="Idetificação do Contrato"
+                  label="Idetificação do Contrato"
+                  lazy-rules
+                  :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
+                />
+                <q-input
+                  type="date"
+                  v-model="object.validade"
+                  outlined
+                  label="Validade do Contrato"
+                  class="q-mb-sm"
+                />
+                <q-input
+                  v-model="object.observacoes"
+                  outlined
+                  label="Observações"
+                  type="textarea"
+                />
 
-              <q-checkbox
-                label="Solicitar assinatura dos participantes"
-                v-model="solicitarAssinatura"
-              />
-              <q-banner class="bg-primary text-white" v-if="solicitarAssinatura" rounded>
-                As partes envolvidas receberão um email solicitando assinatura deste contrato 100%
-                digital. Fique atento quanto ao vencimento do contrato, caso exista.
-              </q-banner>
+                <q-banner class="bg-primary text-white q-mt-sm" rounded>
+                  {{
+                    solicitarAssinatura
+                      ? `As partes envolvidas receberão um email solicitando assinatura deste contrato 100%
+                  digital. Fique atento quanto ao vencimento do contrato, caso exista.`
+                      : `Você deverá enviar manualmente a solicitação de assinatura na tela de contratos.`
+                  }}
+                  <template v-slot:action>
+                    <q-checkbox
+                      label="Solicitar assinatura dos participantes"
+                      v-model="solicitarAssinatura"
+                      color="positive"
+                    />
+                  </template>
+                </q-banner>
+              </div>
             </q-form>
-            <q-card-actions align="right">
+            <q-card-actions align="right" v-if="object.id_modelo">
               <q-btn flat label="Cancelar" @click="backToIndex" />
               <q-btn label="Salvar Contrato" @click="save" color="positive" />
             </q-card-actions>
@@ -158,17 +187,26 @@
       </q-tab-panel>
 
       <q-tab-panel name="anexos">
+        <q-linear-progress indeterminate v-if="loadingAnexos" />
         <div class="q-gutter-sm">
           <q-file
             placeholder="Selecione o arquivo para ser anexado ao contrato"
             label="Selecione o arquivo para ser anexado ao contrato"
             outlined
             v-model="file"
+            color="positive"
           >
             <template v-slot:prepend>
               <q-icon name="attach_file" />
             </template>
             <template v-slot:after>
+              <q-btn
+                icon="visibility"
+                flat
+                round
+                @click="openModal('anexo', parsedFile)"
+                v-if="parsedFile"
+              />
               <q-icon
                 name="delete"
                 color="negative"
@@ -194,8 +232,8 @@
             />
           </q-card-actions>
         </div>
-        <q-linear-progress indeterminate v-if="loadingAnexos" />
-        <q-table :rows="anexos" :columns="columns" :loading="loadingAnexos">
+
+        <q-table :rows="anexos" :columns="columns" :loading="loadingAnexos" color="primary">
           <template v-slot:body-cell-data="props">
             <q-td :props="props">
               {{ formatDate(props.row.CreatedAt) }}
@@ -235,6 +273,7 @@ import fileHelper from '../../helpers/base64'
 import anexosApi from '../../api/anexos.api'
 import wehbookApi from '../../api/webhook.api'
 import dateHelper from 'src/helpers/dateHelper'
+import showMessage from '../../boot/notify'
 export default {
   name: 'ContratoPage',
   data() {
@@ -295,6 +334,7 @@ export default {
       solicitarAssinatura: true,
       loading: true,
       loadingAnexos: true,
+      souContratado: 0,
     }
   },
   async created() {
@@ -329,6 +369,13 @@ export default {
     tab() {
       if (this.tab === 'anexos') {
         this.getAnexosContrato()
+      }
+    },
+    souContratado() {
+      if (this.souContratado) {
+        this.setContratado()
+      } else {
+        this.atualizarConteudoComPessoas()
       }
     },
   },
@@ -368,8 +415,6 @@ export default {
           } else {
             this.create()
           }
-        } else {
-          alert('Existem campos não preenchidos')
         }
       })
     },
@@ -389,10 +434,11 @@ export default {
             await wehbookApi
               .solicitarAssinaturas(webhookContent)
               .then(() => {
+                showMessage.success('Contrato criado com sucesso')
                 this.backToIndex()
               })
               .catch((error) => {
-                alert(error.message)
+                showMessage.error(error.message)
               })
           } else {
             this.backToIndex()
@@ -405,7 +451,10 @@ export default {
     update() {
       contratosApi
         .update(this.object)
-        .then(this.backToIndex())
+        .then(() => {
+          showMessage.success('Contrato editado com sucesso')
+          this.backToIndex()
+        })
         .catch((error) => {
           console.log(error)
         })
@@ -440,6 +489,13 @@ export default {
         })
     },
     getConteudoModelo() {
+      this.object.conteudo = ''
+      this.object.contratante = ''
+      this.object.email_contratante = ''
+      this.object.contratado = ''
+      this.object.email_contratado = ''
+      this.object.id_contratante = ''
+      this.object.id_contratado = ''
       this.modelos.forEach((modelo) => {
         if (modelo.Id === this.object.id_modelo) {
           this.object.conteudo = modelo.conteudo
@@ -448,10 +504,10 @@ export default {
       })
     },
     atualizarConteudoComPessoas() {
+      this.souContratado = 0
       let conteudo = this.conteudoModelo || this.object.conteudo
 
       const contratanteObj = this.pessoas.find((p) => p.Id === this.object.id_contratante)
-      const contratadoObj = this.pessoas.find((p) => p.Id === this.object.id_contratado)
 
       if (contratanteObj) {
         conteudo = conteudo
@@ -474,30 +530,36 @@ export default {
         this.object.email_contratante = contratanteObj.email
       }
 
-      if (contratadoObj) {
-        conteudo = conteudo
-          .replace(/\[contratado\.nome\]/g, contratadoObj.nome)
-          .replace(/\[contratado\.cpfCnpj\]/g, contratadoObj.cpf_cnpj)
-          .replace(/\[contratado\.endereco\]/g, contratadoObj.endereco)
+      if (!this.souContratado && this.object.id_contratado) {
+        const contratadoObj = this.pessoas.find((p) => p.Id === this.object.id_contratado)
+        if (contratanteObj) {
+          conteudo = conteudo
+            .replace(/\[contratado\.nome\]/g, contratadoObj.nome)
+            .replace(/\[contratado\.cpfCnpj\]/g, contratadoObj.cpf_cnpj)
+            .replace(/\[contratado\.endereco\]/g, contratadoObj.endereco)
 
-        if (this.object.assinatura_contratado) {
-          const imgTag = `<img src="${this.object.assinatura_contratado}" style="height: 100px;" />`
-          conteudo = conteudo.replace(/\[contratado\.assinatura\]/g, imgTag)
+          if (this.object.assinatura_contratado) {
+            const imgTag = `<img src="${this.object.assinatura_contratado}" style="height: 100px;" />`
+            conteudo = conteudo.replace(/\[contratado\.assinatura\]/g, imgTag)
+          }
+
+          this.object.pessoas.contratado = {
+            nome: contratadoObj.nome,
+            email: contratadoObj.email,
+          }
+
+          this.object.contratado = contratadoObj.nome
+          this.object.email_contratado = contratadoObj.email
         }
-
-        this.object.pessoas.contratado = {
-          nome: contratadoObj.nome,
-          email: contratadoObj.email,
-        }
-
-        this.object.contratado = contratadoObj.nome
-        this.object.email_contratado = contratadoObj.email
+      } else if (this.souContratado) {
+        this.setContratado()
       }
 
       this.object.nome = `${this.object.contratante} X ${this.object.contratado}`
       this.object.conteudo = conteudo
     },
     async parseFiletoBase64() {
+      this.anexo.nome = this.file.name
       await fileHelper.getBase64(this.file).then((data) => {
         this.parsedFile = data
       })
@@ -509,7 +571,7 @@ export default {
     },
     async anexarArquivo() {
       if (!this.anexo.nome) {
-        alert('Nome do anexo é obrigatório')
+        showMessage.warning('Nome do anexo é obrigatório')
         return
       }
       this.loadingAnexos = true
@@ -518,6 +580,7 @@ export default {
       await anexosApi
         .create(this.anexo)
         .then(() => {
+          showMessage.success('Arquivo anexado ao contrato com sucesso')
           this.getAnexosContrato()
           this.removeParsedFile()
         })
@@ -550,6 +613,7 @@ export default {
       await anexosApi
         .delete(Id)
         .then(() => {
+          showMessage.success('Arquivo removido com sucesso')
           this.getAnexosContrato()
         })
         .catch((error) => {
@@ -558,6 +622,31 @@ export default {
     },
     formatDate(date) {
       return dateHelper.brazilFormat(date)
+    },
+    setContratado() {
+      const contratado = JSON.parse(localStorage.getItem('contrato-user'))
+      let conteudo = this.object.conteudo
+
+      conteudo = conteudo
+        .replace(/\[contratado\.nome\]/g, contratado.nome)
+        .replace(/\[contratado\.cpfCnpj\]/g, contratado.cpfCnpj)
+        .replace(/\[contratado\.endereco\]/g, contratado.endereco)
+
+      if (this.object.assinatura_contratado) {
+        const imgTag = `<img src="${this.object.assinatura_contratado}" style="height: 100px;" />`
+        conteudo = conteudo.replace(/\[contratado\.assinatura\]/g, imgTag)
+      }
+
+      this.object.pessoas.contratado = {
+        nome: contratado.nome,
+        email: contratado.email,
+      }
+
+      this.object.contratado = contratado.nome
+      this.object.email_contratado = contratado.email
+
+      this.object.nome = `${this.object.contratante} X ${this.object.contratado}`
+      this.object.conteudo = conteudo
     },
   },
 }
