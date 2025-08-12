@@ -12,6 +12,17 @@ const routes = [
   },
   {
     path: '/',
+    component: () => import('layouts/FormularioLayout.vue'),
+    children: [
+      {
+        path: '/formulario-contratante/:contrato',
+        name: 'formulario-contratante',
+        component: () => import('pages/Formularios/FormularioContratante.vue'),
+      },
+    ],
+  },
+  {
+    path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '/home', name: 'home', component: () => import('pages/IndexPage.vue') },

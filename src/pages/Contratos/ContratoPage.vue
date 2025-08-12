@@ -21,6 +21,17 @@
       <q-tab-panel name="contrato">
         <div class="row">
           <div class="col-4">
+            <q-banner class="bg-positive text-white" rounded>
+              As partes envolvidas receberão um email solicitando o preenchimento do formulário com
+              os dados do contrato.
+              <template v-slot:action>
+                <q-checkbox
+                  label="Solicitar preenchimento dos participantes"
+                  v-model="solicitarPreenchimento"
+                />
+              </template>
+            </q-banner>
+            <br />
             <q-form class="q-gutter-md" ref="form">
               <q-select
                 :options="modelos"
@@ -41,7 +52,7 @@
                 label="Selecione o Contratante"
                 outlined
                 lazy-rules
-                :rules="[(val) => val || 'Campo obrigatório']"
+                :rules="[(val) => (val && !solicitarPreenchimento) || 'Campo obrigatório']"
                 option-value="Id"
                 option-label="nome"
                 emit-value
@@ -49,13 +60,14 @@
                 v-model="object.id_contratante"
                 :loading="loading"
                 color="positive"
+                v-if="!solicitarPreenchimento"
               />
               <q-select
                 :options="pessoas"
                 label="Selecione o Contratado"
                 outlined
                 lazy-rules
-                :rules="[(val) => val || 'Campo obrigatório']"
+                :rules="[(val) => (val && !solicitarPreenchimento) || 'Campo obrigatório']"
                 option-value="Id"
                 option-label="nome"
                 emit-value
@@ -63,6 +75,7 @@
                 v-model="object.id_contratado"
                 :loading="loading"
                 color="warning"
+                v-if="!solicitarPreenchimento"
               />
               <q-input
                 outlined
@@ -80,13 +93,15 @@
               />
               <q-input v-model="object.observacoes" outlined label="Observações" type="textarea" />
 
-              <q-checkbox
-                label="Solicitar assinatura dos participantes"
-                v-model="solicitarAssinatura"
-              />
-              <q-banner class="bg-primary text-white" v-if="solicitarAssinatura" rounded>
+              <q-banner class="bg-primary text-white" rounded>
                 As partes envolvidas receberão um email solicitando assinatura deste contrato 100%
                 digital. Fique atento quanto ao vencimento do contrato, caso exista.
+                <template v-slot:action>
+                  <q-checkbox
+                    label="Solicitar assinatura dos participantes"
+                    v-model="solicitarAssinatura"
+                  />
+                </template>
               </q-banner>
             </q-form>
             <q-card-actions align="right">
@@ -295,6 +310,7 @@ export default {
       solicitarAssinatura: true,
       loading: true,
       loadingAnexos: true,
+      solicitarPreenchimento: false,
     }
   },
   async created() {
@@ -307,6 +323,7 @@ export default {
       this.object.Id = Id
       await this.getContratoById()
       this.getModelos()
+      this.solicitarPreenchimento = true
     } else {
       this.object.hash = Date.now()
     }

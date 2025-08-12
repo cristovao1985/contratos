@@ -55,6 +55,12 @@ export default {
       url: `${baseURL}/${tableId}/records?where=(email_contratado,eq,${emailContratado})~and(Id,eq,${idContrato})`,
     })
   },
+  getFormularioById: async (Id) => {
+    return api({
+      method: 'get',
+      url: `${baseURL}/${tableId}/records?where=(Id,eq,${Id})`,
+    })
+  },
 }
 
 const clearObject = (data) => {
