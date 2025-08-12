@@ -7,6 +7,7 @@
           Gerenciamento de pessoas signatárias como partes contratante ou contratada em um contrato
         </div>
       </q-card-section>
+      <q-linear-progress indeterminate v-if="loading" />
     </q-card>
 
     <TableComponent

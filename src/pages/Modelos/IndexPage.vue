@@ -7,6 +7,7 @@
           Modelos de Contratos para serem reutilizados em contratos futuros
         </div>
       </q-card-section>
+      <q-linear-progress indeterminate v-if="loading" />
     </q-card>
 
     <TableComponent

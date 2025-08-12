@@ -1,6 +1,12 @@
 <template>
   <q-page class="q-ma-md">
-    <h5>{{ edit ? 'Edição' : 'Criação' }} de pessoa</h5>
+    <q-card class="q-mb-md">
+      <q-card-section>
+        <div class="text-h6 text-primary">{{ edit ? 'Edição' : 'Criação' }} de pessoa</div>
+        <div class="text-subtitle2">Pessoa signatária para ser atrelada a um contrato</div>
+      </q-card-section>
+      <q-linear-progress indeterminate v-if="loading" />
+    </q-card>
     <q-linear-progress indeterminate v-if="loading" />
     <q-form class="q-gutter-md" ref="form">
       <q-checkbox
@@ -54,7 +60,7 @@
       />
       <q-card-actions align="right">
         <q-btn flat label="Cancelar" @click="backToIndex" />
-        <q-btn label="Salvar Pessoa" color="positive" @click="save" />
+        <q-btn label="Salvar Pessoa" color="positive" @click="save" :loading="loading" />
       </q-card-actions>
     </q-form>
   </q-page>
@@ -108,6 +114,7 @@ export default {
     save() {
       this.$refs.form.validate().then((valid) => {
         if (valid) {
+          this.loading = true
           if (this.edit) {
             this.update()
           } else {
@@ -126,6 +133,7 @@ export default {
         .catch((error) => {
           showMessage.error('Houve um erro ao criar pessoa')
           console.log(error)
+          this.loading = false
         })
     },
     update() {
@@ -138,6 +146,7 @@ export default {
         .catch((error) => {
           showMessage.error('Houve um erro ao editar pessoa')
           console.log(error)
+          this.loading = false
         })
     },
   },

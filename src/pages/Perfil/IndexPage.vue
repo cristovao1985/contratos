@@ -16,8 +16,8 @@
         </q-icon>
         <br />
       </q-card-section>
+      <q-linear-progress indeterminate v-if="loading" />
     </q-card>
-    <q-linear-progress indeterminate v-if="loading" />
     <q-form ref="form" class="q-gutter-sm">
       <q-checkbox
         v-model="object.tipo_pessoa"

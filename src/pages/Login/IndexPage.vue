@@ -115,6 +115,7 @@ export default {
                       fb_id: res.uid,
                       endereco: user.endereco,
                       cpfCnpj: user.cpf_cnpj,
+                      id: user.Id,
                     }),
                   )
 
