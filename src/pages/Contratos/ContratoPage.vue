@@ -22,20 +22,6 @@
         <div class="row">
           <div class="col-4">
             <q-form class="q-gutter-md" ref="form">
-              <q-input
-                outlined
-                v-model="object.nome"
-                placeholder="Idetificação do Contrato"
-                label="Idetificação do Contrato"
-                lazy-rules
-                :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
-              />
-              <!-- <q-input
-                outlined
-                v-model="object.categoria"
-                placeholder="Ex: Locação de Imóvel"
-                label="Categoria"
-              /> -->
               <q-select
                 :options="modelos"
                 label="Selecione o Modelo de Contrato"
@@ -78,7 +64,14 @@
                 :loading="loading"
                 color="warning"
               />
-
+              <q-input
+                outlined
+                v-model="object.nome"
+                placeholder="Idetificação do Contrato"
+                label="Idetificação do Contrato"
+                lazy-rules
+                :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
+              />
               <q-input
                 type="date"
                 v-model="object.validade"
@@ -314,6 +307,8 @@ export default {
       this.object.Id = Id
       await this.getContratoById()
       this.getModelos()
+    } else {
+      this.object.hash = Date.now()
     }
   },
   watch: {
@@ -474,6 +469,9 @@ export default {
           nome: contratanteObj.nome,
           email: contratanteObj.email,
         }
+
+        this.object.contratante = contratanteObj.nome
+        this.object.email_contratante = contratanteObj.email
       }
 
       if (contratadoObj) {
@@ -491,8 +489,12 @@ export default {
           nome: contratadoObj.nome,
           email: contratadoObj.email,
         }
+
+        this.object.contratado = contratadoObj.nome
+        this.object.email_contratado = contratadoObj.email
       }
 
+      this.object.nome = `${this.object.contratante} X ${this.object.contratado}`
       this.object.conteudo = conteudo
     },
     async parseFiletoBase64() {

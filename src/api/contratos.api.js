@@ -43,6 +43,18 @@ export default {
       data: clearObject(data),
     })
   },
+  validarContratoPorContratanteIdContrato: (emailContratante, idContrato) => {
+    return api({
+      method: 'get',
+      url: `${baseURL}/${tableId}/records?where=(email_contratante,eq,${emailContratante})~and(Id,eq,${idContrato})`,
+    })
+  },
+  validarContratoPorContratadoIdContrato: (emailContratado, idContrato) => {
+    return api({
+      method: 'get',
+      url: `${baseURL}/${tableId}/records?where=(email_contratado,eq,${emailContratado})~and(Id,eq,${idContrato})`,
+    })
+  },
 }
 
 const clearObject = (data) => {

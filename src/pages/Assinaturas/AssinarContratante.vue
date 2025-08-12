@@ -125,7 +125,7 @@ export default {
     }
   },
   async created() {
-    await this.getContratoById()
+    await this.validarContrato()
     if (this.contrato?.Id) {
       this.getPessoaByEmail()
     }
@@ -141,9 +141,12 @@ export default {
           console.log(error)
         })
     },
-    async getContratoById() {
+    async validarContrato() {
       await contratosApi
-        .getById(this.$route.params.contrato)
+        .validarContratoPorContratanteIdContrato(
+          this.$route.params.contratante,
+          this.$route.params.contrato,
+        )
         .then((res) => {
           this.contrato = res.data.list[0]
         })
