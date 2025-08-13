@@ -1,13 +1,12 @@
 <template>
   <q-page class="q-ma-md">
-    <h5></h5>
     <q-card class="q-mb-md">
       <q-card-section>
         <div class="text-h6 text-primary">{{ edit ? 'Edição' : 'Criação' }} de contrato</div>
         <div class="text-subtitle2">Crie ou edite um contrato entre você ou outros signatários</div>
       </q-card-section>
+      <q-linear-progress indeterminate v-if="loading" />
     </q-card>
-    <q-linear-progress indeterminate v-if="loading" />
     <q-tabs
       v-model="tab"
       dense
@@ -120,7 +119,7 @@
             </q-form>
             <q-card-actions align="right" v-if="object.id_modelo">
               <q-btn flat label="Cancelar" @click="backToIndex" />
-              <q-btn label="Salvar Contrato" @click="save" color="positive" />
+              <q-btn label="Salvar Contrato" @click="save" color="positive" :loading="loading" />
             </q-card-actions>
           </div>
           <div class="col"></div>
@@ -187,7 +186,6 @@
       </q-tab-panel>
 
       <q-tab-panel name="anexos">
-        <q-linear-progress indeterminate v-if="loadingAnexos" />
         <div class="q-gutter-sm">
           <q-file
             placeholder="Selecione o arquivo para ser anexado ao contrato"
@@ -233,7 +231,7 @@
           </q-card-actions>
         </div>
 
-        <q-table :rows="anexos" :columns="columns" :loading="loadingAnexos" color="primary">
+        <q-table :rows="anexos" :columns="columns" :loading="loading" color="primary">
           <template v-slot:body-cell-data="props">
             <q-td :props="props">
               {{ formatDate(props.row.CreatedAt) }}
@@ -301,7 +299,7 @@ export default {
         contrato: '',
         contratante: '',
         email_contratante: '',
-        contratado: '',
+
         email_contratado: '',
       },
       edit: false,
@@ -311,7 +309,6 @@ export default {
       modelo: '',
       conteudoModelo: '',
       contratante: '',
-      contratado: '',
       file: '',
       parsedFile: '',
       tab: 'contrato',
@@ -335,6 +332,7 @@ export default {
       loading: true,
       loadingAnexos: true,
       souContratado: 0,
+      contratado: JSON.parse(localStorage.getItem('contrato-user')),
     }
   },
   async created() {
@@ -390,6 +388,12 @@ export default {
           if (res.data.list.length) {
             this.object = res.data.list[0]
             this.object.pessoas = JSON.parse(this.object.pessoas)
+
+            if (this.object.id_contratado === this.contratado.id) {
+              this.souContratado = 1
+            } else {
+              this.object.id_contratado = null
+            }
           } else {
             this.object = {}
             this.edit = false
@@ -410,6 +414,8 @@ export default {
           this.object.email_contratante = this.object.pessoas.contratante.email
           this.object.contratado = this.object.pessoas.contratado.nome
           this.object.email_contratado = this.object.pessoas.contratado.email
+
+          this.loading = true
           if (this.edit) {
             this.update()
           } else {
@@ -439,6 +445,7 @@ export default {
               })
               .catch((error) => {
                 showMessage.error(error.message)
+                this.loading = false
               })
           } else {
             this.backToIndex()
@@ -457,6 +464,7 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.loading = false
         })
     },
     getPessoas() {
@@ -477,7 +485,7 @@ export default {
 
           res.data.list.forEach((modelo) => {
             this.modelos.push({
-              nome: `${modelo.nome} - ${modelo.descricao}`,
+              nome: `${modelo.nome}`,
               Id: modelo.Id,
               conteudo: modelo.conteudo,
             })
@@ -489,22 +497,15 @@ export default {
         })
     },
     getConteudoModelo() {
-      this.object.conteudo = ''
-      this.object.contratante = ''
-      this.object.email_contratante = ''
-      this.object.contratado = ''
-      this.object.email_contratado = ''
-      this.object.id_contratante = ''
-      this.object.id_contratado = ''
       this.modelos.forEach((modelo) => {
         if (modelo.Id === this.object.id_modelo) {
           this.object.conteudo = modelo.conteudo
           this.conteudoModelo = modelo.conteudo
+          this.nomeModelo = modelo.nome
         }
       })
     },
     atualizarConteudoComPessoas() {
-      this.souContratado = 0
       let conteudo = this.conteudoModelo || this.object.conteudo
 
       const contratanteObj = this.pessoas.find((p) => p.Id === this.object.id_contratante)
@@ -532,7 +533,7 @@ export default {
 
       if (!this.souContratado && this.object.id_contratado) {
         const contratadoObj = this.pessoas.find((p) => p.Id === this.object.id_contratado)
-        if (contratanteObj) {
+        if (contratadoObj) {
           conteudo = conteudo
             .replace(/\[contratado\.nome\]/g, contratadoObj.nome)
             .replace(/\[contratado\.cpfCnpj\]/g, contratadoObj.cpf_cnpj)
@@ -555,7 +556,6 @@ export default {
         this.setContratado()
       }
 
-      this.object.nome = `${this.object.contratante} X ${this.object.contratado}`
       this.object.conteudo = conteudo
     },
     async parseFiletoBase64() {
@@ -574,7 +574,7 @@ export default {
         showMessage.warning('Nome do anexo é obrigatório')
         return
       }
-      this.loadingAnexos = true
+      this.loading = true
       this.anexo.arquivo = this.parsedFile
       this.anexo.id_contrato = this.object.Id
       await anexosApi
@@ -593,7 +593,7 @@ export default {
         .getAllByIdContrato(this.object.Id)
         .then((res) => {
           this.anexos = res.data.list
-          this.loadingAnexos = false
+          this.loading = false
         })
         .catch((error) => {
           console.log(error)
@@ -609,7 +609,7 @@ export default {
       this.showModal[modal] = false
     },
     async deleteAnexo(Id) {
-      this.loadingAnexos = true
+      this.loading = true
       await anexosApi
         .delete(Id)
         .then(() => {
@@ -624,13 +624,12 @@ export default {
       return dateHelper.brazilFormat(date)
     },
     setContratado() {
-      const contratado = JSON.parse(localStorage.getItem('contrato-user'))
       let conteudo = this.object.conteudo
 
       conteudo = conteudo
-        .replace(/\[contratado\.nome\]/g, contratado.nome)
-        .replace(/\[contratado\.cpfCnpj\]/g, contratado.cpfCnpj)
-        .replace(/\[contratado\.endereco\]/g, contratado.endereco)
+        .replace(/\[contratado\.nome\]/g, this.contratado.nome)
+        .replace(/\[contratado\.cpfCnpj\]/g, this.contratado.cpfCnpj)
+        .replace(/\[contratado\.endereco\]/g, this.contratado.endereco)
 
       if (this.object.assinatura_contratado) {
         const imgTag = `<img src="${this.object.assinatura_contratado}" style="height: 100px;" />`
@@ -638,14 +637,14 @@ export default {
       }
 
       this.object.pessoas.contratado = {
-        nome: contratado.nome,
-        email: contratado.email,
+        nome: this.contratado.nome,
+        email: this.contratado.email,
       }
 
-      this.object.contratado = contratado.nome
-      this.object.email_contratado = contratado.email
+      this.object.contratado = this.contratado.nome
+      this.object.email_contratado = this.contratado.email
+      this.object.id_contratado = this.contratado.id
 
-      this.object.nome = `${this.object.contratante} X ${this.object.contratado}`
       this.object.conteudo = conteudo
     },
   },

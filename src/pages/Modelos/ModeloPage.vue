@@ -1,8 +1,16 @@
 <template>
   <q-page class="q-ma-md">
-    <h5>{{ edit ? 'Edição' : 'Criação' }} de modelo de contrato</h5>
-    <q-linear-progress indeterminate v-if="loading" />
-    <q-form class="q-gutter-md" ref="form">
+    <q-card class="q-mb-md">
+      <q-card-section>
+        <div class="text-h6 text-primary">
+          {{ edit ? 'Edição' : 'Criação' }} de modelo de contrato
+        </div>
+        <div class="text-subtitle2">Crie ou edite um modelo de contrato para ser reutilizado</div>
+      </q-card-section>
+      <q-linear-progress indeterminate v-if="loading" />
+    </q-card>
+
+    <q-form class="q-gutter-md q-mt-sm" ref="form">
       <q-input
         outlined
         v-model="object.nome"
@@ -87,7 +95,7 @@
       >
       <q-card-actions align="right">
         <q-btn flat label="Cancelar" @click="backToIndex" />
-        <q-btn label="Salvar Modelo" color="positive" @click="save" />
+        <q-btn label="Salvar Modelo" color="positive" @click="save" :loading="loading" />
       </q-card-actions>
     </q-form>
   </q-page>
@@ -151,6 +159,7 @@ export default {
     save() {
       this.$refs.form.validate().then((valid) => {
         if (valid) {
+          this.loading = true
           if (this.edit) {
             this.update()
           } else {
@@ -168,6 +177,7 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.loading = false
         })
     },
     update() {
@@ -179,6 +189,7 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.loading = false
         })
     },
     async copyText(text) {

@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
         <q-toolbar-title>Gestão de Contratos</q-toolbar-title>
-        <div>v.0.0.4</div>
+        <div>v.0.0.5</div>
       </q-toolbar>
     </q-header>
 

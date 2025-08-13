@@ -5,6 +5,7 @@
         <div class="text-h6 text-primary">Contratos</div>
         <div class="text-subtitle2">Gerenciamento de Contratos entre você e seus clientes</div>
       </q-card-section>
+      <q-linear-progress indeterminate v-if="loading" />
     </q-card>
 
     <TableContratosComponent
@@ -129,10 +130,10 @@ export default {
       }
       webhookApi
         .solicitarAssinaturaDoContratante(data)
-        .then(showMessage.success('Email para contratante enviando com sucesso!'))
+        .then(showMessage.success(`Email para ${row.contratante} enviando com sucesso!`))
         .catch((error) => {
           console.log(error)
-          showMessage.error('Houve um erro ao enviar email para', row.email_contratante)
+          showMessage.error('Houve um erro ao enviar email para', row.contratante)
         })
     },
     emailContratado(row) {
@@ -144,10 +145,10 @@ export default {
       }
       webhookApi
         .solicitarAssinaturaDoContratado(data)
-        .then(showMessage.success('Email para contratado enviando com sucesso!'))
+        .then(showMessage.success(`Email para ${row.contratado} enviando com sucesso!`))
         .catch((error) => {
           console.log(error)
-          showMessage.error('Houve um erro ao enviar email para', row.email_contratado)
+          showMessage.error('Houve um erro ao enviar email para', row.contratado)
         })
     },
     async revogarAssinaturaContratante(row) {
