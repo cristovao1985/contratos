@@ -51,9 +51,9 @@
               />
               <q-input
                 v-model="contratante.nascimento"
-                label="Digite sua data de nascimento"
+                :label="`${tipoPessoa === 'PF' ? 'Data de Nascimento(Necessário para Assinatura)' : 'Abertura da Empresa(Necessário para Assinatura)'}`"
                 outlined
-                placeholder="Ex: dd/mm/aaaa"
+                :placeholder="`${tipoPessoa === 'PF' ? 'Ex: 123.456.789-00' : 'Ex: 12.345.678/0001-00'}`"
                 mask="##/##/####"
                 lazy-rules
                 :rules="[(val) => val.length > 4 || 'Campo obrigatório']"

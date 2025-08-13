@@ -44,7 +44,11 @@
       <q-input outlined v-model="object.telefone" label="Telefone" mask="(##)#####-####" />
       <q-input outlined v-model="object.email" disable label="Email" />
       <q-input outlined v-model="object.endereco" label="Endereço Completo" />
-      <q-file outlined v-model="file" label="Toque para selecionar imagem" />
+      <q-file outlined v-model="file" label="Toque para selecionar imagem" color="positive">
+        <template v-slot:prepend>
+          <q-icon name="add_photo_alternate" />
+        </template>
+      </q-file>
       <br />
       <div>
         <q-avatar size="80px">

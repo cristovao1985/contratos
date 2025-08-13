@@ -1,5 +1,7 @@
 import { api, baseURL } from 'src/boot/axios'
 const tableId = 'mb13yqkijda8ocs'
+import session from 'src/helpers/session'
+let tenant = await session.getUserTenant()
 
 export default {
   getByIdContrato: async (hash) => {
@@ -9,6 +11,7 @@ export default {
     })
   },
   create: (data) => {
+    data.tenant = tenant
     return api({
       method: 'post',
       url: `${baseURL}/${tableId}/records`,
@@ -18,6 +21,7 @@ export default {
   delete: async (Id) => {
     const data = {
       Id,
+      tenant,
     }
 
     return api({

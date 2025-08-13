@@ -7,10 +7,9 @@
       </q-card-section>
       <q-linear-progress indeterminate v-if="loading" />
     </q-card>
-    <q-linear-progress indeterminate v-if="loading" />
     <q-form class="q-gutter-md" ref="form">
       <q-checkbox
-        v-model="tipoPessoa"
+        v-model="object.tipo_pessoa"
         true-value="PJ"
         false-value="PF"
         label="Pessoa Jurídica"
@@ -26,9 +25,9 @@
       <q-input
         outlined
         v-model="object.cpf_cnpj"
-        :label="`${tipoPessoa === 'PF' ? 'Digite o CPF' : 'Digite o CNPJ'}`"
-        :placeholder="`${tipoPessoa === 'PF' ? 'Ex: 123.456.789-00' : 'Ex: 12.345.678/0001-00'}`"
-        :mask="`${tipoPessoa === 'PF' ? '###.###.###-##' : '##.###.###/####-##'}`"
+        :label="`${object.tipo_pessoa === 'PF' ? 'Digite o CPF' : 'Digite o CNPJ'}`"
+        :placeholder="`${object.tipo_pessoa === 'PF' ? 'Ex: 123.456.789-00' : 'Ex: 12.345.678/0001-00'}`"
+        :mask="`${object.tipo_pessoa === 'PF' ? '###.###.###-##' : '##.###.###/####-##'}`"
         lazy-rules
         :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
       />
@@ -55,7 +54,7 @@
         type="date"
         lazy-rules
         :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
-        label="Data de Nascimento(Necessário para Assinatura)"
+        :label="`${object.tipo_pessoa === 'PF' ? 'Data de Nascimento(Necessário para Assinatura)' : 'Abertura da Empresa(Necessário para Assinatura)'}`"
         placeholder="Ex: dd/mm/aaaa"
       />
       <q-card-actions align="right">
@@ -76,6 +75,7 @@ export default {
       object: {
         nome: '',
         email: '',
+        tipo_pessoa: 'PF',
       },
       edit: false,
       tipoPessoa: 'PF',
@@ -127,7 +127,7 @@ export default {
       pessoasApi
         .create(this.object)
         .then(() => {
-          showMessage.success('Pessoa criada com sucesso')
+          showMessage.success(`${this.object.nome} criado(a) com sucesso`)
           this.backToIndex()
         })
         .catch((error) => {
@@ -140,7 +140,7 @@ export default {
       pessoasApi
         .update(this.object)
         .then(() => {
-          showMessage.success('Pessoa editada com sucesso')
+          showMessage.success(`${this.object.nome} editado(a) com sucesso`)
           this.backToIndex()
         })
         .catch((error) => {

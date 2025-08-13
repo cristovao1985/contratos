@@ -17,6 +17,11 @@
       <q-space />
       <q-btn icon="add" color="primary" label="Adicionar" :to="actionsPath" :disable="!hasAccess" />
     </template>
+    <!-- <template v-slot:body-cell-nome="props">
+      <q-td :props="props">
+        <span class="text-black">{{ props.row.nome }}?</span>
+      </q-td>
+    </template> -->
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
         <!-- <q-btn icon="schedule" flat round @click="openModal('historico', props.row.Id)" /> -->
@@ -24,7 +29,7 @@
           icon="print"
           flat
           round
-          @click="print(props.row.conteudo)"
+          @click="print(props.row)"
           v-if="showPrint"
           :disable="!hasAccess"
         />

@@ -38,6 +38,7 @@ export default {
         { field: 'Id', label: '#', align: 'left' },
         { field: 'nome', label: 'Nome', align: 'left' },
         { field: 'email', label: 'Email', align: 'left' },
+        { field: 'tipo_pessoa', label: 'Tipo Pessoa', align: 'left' },
         { label: 'Ações', name: 'actions', align: 'left' },
       ],
       sort: 'nome',

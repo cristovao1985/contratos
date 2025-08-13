@@ -112,7 +112,7 @@ export default {
     },
     imprimirContrato(contrato) {
       const route = this.$router.resolve({
-        name: 'print',
+        name: 'print-contrato',
         params: {
           id: contrato.Id,
         },
@@ -187,7 +187,7 @@ export default {
             'Assinatura do Contratante foi revogada com sucesso! Solicite uma nova assinatura',
           )
           historico_contratoApi.create({
-            titulo: 'Revogado de assinatura do contratante',
+            titulo: 'Revogada a assinatura do contratante',
             hash: row.hash,
           })
         })
@@ -207,7 +207,7 @@ export default {
             'Assinatura do Contratado foi revogada com sucesso! Solicite uma nova assinatura',
           )
           historico_contratoApi.create({
-            titulo: 'Solicitação de assinatura do contratado',
+            titulo: 'Revogada a assinatura do contratado',
             hash: row.hash,
           })
         })

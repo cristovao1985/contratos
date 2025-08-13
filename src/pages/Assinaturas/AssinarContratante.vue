@@ -53,7 +53,7 @@
               />
               <q-input
                 v-model="contratante.nascimento"
-                label="Digite sua data de nascimento"
+                :label="`${tipoPessoa === 'PF' ? 'Data de Nascimento(Necessário para Assinatura)' : 'Abertura da Empresa(Necessário para Assinatura)'}`"
                 outlined
                 placeholder="Ex: dd/mm/aaaa"
                 mask="##/##/####"
@@ -104,6 +104,8 @@
 import pessoasApi from 'src/api/pessoas.api'
 import { VueSignaturePad } from 'vue-signature-pad'
 import contratosApi from 'src/api/contratos.api'
+import showMessage from '../../boot/notify'
+import historico_contratoApi from 'src/api/historico_contrato.api'
 export default {
   name: 'AssinaturaContratantePage',
   components: {
@@ -163,10 +165,10 @@ export default {
           const documentoContratante = this.parseDocument(this.contratante.documento)
 
           if (date1.getTime() === date2.getTime() && documentoPessoa === documentoContratante) {
-            alert('Seguir para assinatura')
+            showMessage.success('Seguir para assinatura')
             this.assinar = true
           } else {
-            alert(
+            showMessage.warning(
               'Dados inválidos. Dados do contratante não conferem. Verifique o documento e data de nascimento informados',
             )
             this.assinar = false
@@ -187,7 +189,7 @@ export default {
     assinarContrato() {
       const { isEmpty, data } = this.$refs.signaturePad.saveSignature()
       if (isEmpty) {
-        alert('Assinatura não realizada')
+        showMessage.warning('Assinatura não realizada')
       } else {
         const contrato = {
           Id: this.$route.params.contrato,
@@ -196,13 +198,17 @@ export default {
         contratosApi
           .update(contrato)
           .then(() => {
-            alert('Contrato assinado com sucesso!')
+            showMessage.success('Contrato assinado com sucesso!')
+            historico_contratoApi.create({
+              titulo: 'Contratante assinou o contrato',
+              hash: this.contrato.hash,
+            })
             this.assinar = false
-            this.getContratoById()
+            this.validarContrato()
           })
           .catch((error) => {
             console.log(error)
-            alert('houve um erro ao assinar contrato')
+            showMessage.error('houve um erro ao assinar contrato')
           })
       }
     },

@@ -1,4 +1,5 @@
-import PrintComponent from '../components/PrintFile.vue'
+import PrintContrato from '../components/PrintContrato.vue'
+import PrintModelo from '../components/PrintModelo.vue'
 
 const routes = [
   { path: '/', redirect: { path: '/home' } },
@@ -36,7 +37,10 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/PrintLayout.vue'),
-    children: [{ path: '/print/:id', name: 'print', component: () => PrintComponent }],
+    children: [
+      { path: '/print-contrato/:id', name: 'print-contrato', component: () => PrintContrato },
+      { path: '/print-modelo/:id', name: 'print-modelo', component: () => PrintModelo },
+    ],
   },
   {
     path: '/',

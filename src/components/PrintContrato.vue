@@ -5,7 +5,7 @@
 <script>
 import contratosApi from 'src/api/contratos.api'
 export default {
-  name: 'PrintFile',
+  name: 'PrintContrato',
   data() {
     return {
       contrato: {},
@@ -46,7 +46,7 @@ export default {
     async mountAssinaturaContratante(contrato) {
       try {
         const imgTag = `<img src="${contrato.assinatura_contratante}" style="height: 100px;" />`
-        return (contrato = contrato.conteudo.replace(/\[contratante\.assinatura\]/g, imgTag))
+        return await (contrato = contrato.conteudo.replace(/\[contratante\.assinatura\]/g, imgTag))
       } catch (error) {
         alert('Erro ao gerar assinatura contratante')
         console.log(error)
@@ -55,7 +55,7 @@ export default {
     async mountAssinaturaContratado(contrato) {
       try {
         const imgTag = `<img src="${contrato.assinatura_contratado}" style="height: 100px;" />`
-        return (contrato = contrato.conteudo.replace(/\[contratado\.assinatura\]/g, imgTag))
+        return await (contrato = contrato.conteudo.replace(/\[contratado\.assinatura\]/g, imgTag))
       } catch (error) {
         alert('Erro ao gerar assinatura contratado')
         console.log(error)

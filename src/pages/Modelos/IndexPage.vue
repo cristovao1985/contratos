@@ -20,6 +20,8 @@
       :showCopy="true"
       @deleteRow="deleteRow"
       @createCopy="createCopy"
+      :showPrint="true"
+      @print="imprimirModelo"
     />
   </q-page>
 </template>
@@ -38,7 +40,7 @@ export default {
       rows: [],
       columns: [
         { field: 'Id', label: '#', align: 'left' },
-        { field: 'nome', label: 'Nome', align: 'left' },
+        { field: 'nome', name: 'nome', label: 'Nome', align: 'left' },
         { field: 'descricao', label: 'Descrição', align: 'left' },
         { label: 'Ações', name: 'actions', align: 'left' },
       ],
@@ -93,6 +95,16 @@ export default {
           console.log(error)
           this.loading = false
         })
+    },
+    imprimirModelo(modelo) {
+      const route = this.$router.resolve({
+        name: 'print-modelo',
+        params: {
+          id: modelo.Id,
+        },
+      })
+
+      window.open(route.href, '_blank')
     },
   },
 }

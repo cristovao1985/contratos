@@ -329,7 +329,7 @@ export default {
       showModal: {
         anexo: false,
       },
-      solicitarAssinatura: true,
+      solicitarAssinatura: false,
       loading: true,
       loadingAnexos: true,
       souContratado: 0,
@@ -393,7 +393,7 @@ export default {
             if (this.object.id_contratado === this.contratado.id) {
               this.souContratado = 1
             } else {
-              this.object.id_contratado = null
+              //this.object.id_contratado = null
             }
           } else {
             this.object = {}
@@ -519,7 +519,8 @@ export default {
       })
     },
     atualizarConteudoComPessoas() {
-      let conteudo = this.conteudoModelo || this.object.conteudo
+      let conteudo = this.edit ? this.object.conteudo : this.conteudoModelo
+      console.log('passou aqui')
 
       const contratanteObj = this.pessoas.find((p) => p.Id === this.object.id_contratante)
 
