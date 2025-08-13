@@ -2,10 +2,10 @@ import { api, baseURL } from 'src/boot/axios'
 const tableId = 'mb13yqkijda8ocs'
 
 export default {
-  getByIdContrato: async (Id) => {
+  getByIdContrato: async (hash) => {
     return api({
       method: 'get',
-      url: `${baseURL}/${tableId}/records?where=(id_contrato,eq,${Id})`,
+      url: `${baseURL}/${tableId}/records?where=(hash,eq,${hash})&sort=CreatedAt`,
     })
   },
   create: (data) => {

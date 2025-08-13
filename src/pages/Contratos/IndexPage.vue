@@ -24,6 +24,12 @@
       @emailContratado="emailContratado"
       @revogarAssinaturaContratante="revogarAssinaturaContratante"
       @revogarAssinaturaContratado="revogarAssinaturaContratado"
+      @historicoContrato="getHistoricoContrato"
+    />
+    <Historico
+      :data="historico"
+      :show="showModal.historico"
+      @closeModal="closeModal('historico')"
     />
   </q-page>
 </template>
@@ -33,10 +39,13 @@ import TableContratosComponent from 'src/components/TableContratosComponent'
 import contratosApi from '../../api/contratos.api'
 import webhookApi from 'src/api/webhook.api'
 import showMessage from '../../boot/notify'
+import historico_contratoApi from 'src/api/historico_contrato.api'
+import Historico from 'src/components/Historico'
 export default {
   name: 'ContratosPage',
   components: {
     TableContratosComponent,
+    Historico,
   },
   data() {
     return {
@@ -62,6 +71,10 @@ export default {
       ],
       sort: 'nome',
       loading: true,
+      historico: [],
+      showModal: {
+        historico: false,
+      },
     }
   },
   async created() {
@@ -80,12 +93,16 @@ export default {
           this.loading = false
         })
     },
-    deleteRow(Id) {
+    deleteRow({ Id, hash }) {
       this.loading = true
       contratosApi
         .delete(Id)
         .then(() => {
           showMessage.success('Contrato removido com sucesso')
+          historico_contratoApi.create({
+            titulo: 'Contrato deletado',
+            hash: hash,
+          })
           this.getAll()
         })
         .catch((error) => {
@@ -135,6 +152,10 @@ export default {
           console.log(error)
           showMessage.error('Houve um erro ao enviar email para', row.contratante)
         })
+      historico_contratoApi.create({
+        titulo: 'Solicitação de assinatura do contratante',
+        hash: row.hash,
+      })
     },
     emailContratado(row) {
       const data = {
@@ -150,6 +171,10 @@ export default {
           console.log(error)
           showMessage.error('Houve um erro ao enviar email para', row.contratado)
         })
+      historico_contratoApi.create({
+        titulo: 'Solicitação de assinatura do contratado',
+        hash: row.hash,
+      })
     },
     async revogarAssinaturaContratante(row) {
       this.loading = true
@@ -161,6 +186,10 @@ export default {
           showMessage.success(
             'Assinatura do Contratante foi revogada com sucesso! Solicite uma nova assinatura',
           )
+          historico_contratoApi.create({
+            titulo: 'Revogado de assinatura do contratante',
+            hash: row.hash,
+          })
         })
         .catch((error) => {
           console.log(error)
@@ -177,11 +206,36 @@ export default {
           showMessage.success(
             'Assinatura do Contratado foi revogada com sucesso! Solicite uma nova assinatura',
           )
+          historico_contratoApi.create({
+            titulo: 'Solicitação de assinatura do contratado',
+            hash: row.hash,
+          })
         })
         .catch((error) => {
           console.log(error)
           this.loading = false
         })
+    },
+    async getHistoricoContrato(hash) {
+      this.loading = true
+      await historico_contratoApi
+        .getByIdContrato(hash)
+        .then((res) => {
+          this.historico = res.data.list
+
+          this.openModal('historico')
+          this.loading = false
+        })
+        .catch((error) => {
+          console.log(error)
+          this.loading = false
+        })
+    },
+    openModal(modal) {
+      this.showModal[modal] = true
+    },
+    closeModal(modal) {
+      this.showModal[modal] = false
     },
   },
 }

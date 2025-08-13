@@ -272,6 +272,7 @@ import anexosApi from '../../api/anexos.api'
 import wehbookApi from '../../api/webhook.api'
 import dateHelper from 'src/helpers/dateHelper'
 import showMessage from '../../boot/notify'
+import historicoContratoApi from '../../api/historico_contrato.api'
 export default {
   name: 'ContratoPage',
   data() {
@@ -299,7 +300,7 @@ export default {
         contrato: '',
         contratante: '',
         email_contratante: '',
-
+        contratado: '',
         email_contratado: '',
       },
       edit: false,
@@ -441,6 +442,10 @@ export default {
               .solicitarAssinaturas(webhookContent)
               .then(() => {
                 showMessage.success('Contrato criado com sucesso')
+                historicoContratoApi.create({
+                  titulo: 'Contrato criado',
+                  hash: this.object.hash,
+                })
                 this.backToIndex()
               })
               .catch((error) => {
@@ -448,6 +453,10 @@ export default {
                 this.loading = false
               })
           } else {
+            historicoContratoApi.create({
+              titulo: 'Contrato criado',
+              hash: this.object.hash,
+            })
             this.backToIndex()
           }
         })
@@ -460,6 +469,10 @@ export default {
         .update(this.object)
         .then(() => {
           showMessage.success('Contrato editado com sucesso')
+          historicoContratoApi.create({
+            titulo: 'Contrato editado',
+            hash: this.object.hash,
+          })
           this.backToIndex()
         })
         .catch((error) => {
