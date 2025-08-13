@@ -85,6 +85,7 @@
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
         <!-- <q-btn icon="schedule" flat round @click="openModal('historico', props.row.Id)" /> -->
+        <q-btn icon="history" flat round @click="historicoContrato(props.row.hash)" color="info" />
         <q-btn
           icon="print"
           flat
@@ -112,7 +113,7 @@
           icon="delete"
           flat
           round
-          @click="deleteRow(props.row.Id)"
+          @click="deleteRow(props.row.Id, props.row.hash)"
           :disable="!hasAccess"
         />
       </q-td>
@@ -149,8 +150,8 @@ export default {
     },
   },
   methods: {
-    deleteRow(Id) {
-      this.$emit('deleteRow', Id)
+    deleteRow(Id, hash) {
+      this.$emit('deleteRow', { Id, hash })
     },
     print(content) {
       this.$emit('print', content)
@@ -172,6 +173,9 @@ export default {
     },
     formatDate(date) {
       return dateHelper.brazilFormat(date)
+    },
+    historicoContrato(hash) {
+      this.$emit('historicoContrato', hash)
     },
   },
 }
